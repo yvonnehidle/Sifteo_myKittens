@@ -9,8 +9,11 @@ using namespace Sifteo;
 ///////////////////////////////////////////////////////
 // META DATA
 ///////////////////////////////////////////////////////
-static AssetSlot gMainSlot = AssetSlot::allocate()
-    .bootstrap(KittenAssets);
+static AssetSlot MainSlot = AssetSlot::allocate()
+.bootstrap(KittenAssets);
+
+static AssetSlot SecondarySlot = AssetSlot::allocate()
+.bootstrap(KittenAssets2);
 	
 static Metadata M = Metadata()
     .title("myKittens")
@@ -59,8 +62,6 @@ void init(CubeID cube)
     vbuf.initMode(BG0_SPR_BG1);
     vbuf.attach(cube);
 	
-	Events::neighborAdd.set(&SensorListener::onNeighborAdd, this);
-	Events::neighborRemove.set(&SensorListener::onNeighborRemove, this);
 	Events::cubeAccelChange.set(&SensorListener::onAccelChange, this);
 	Events::cubeTouch.set(&SensorListener::onTouch, this);
 }
@@ -83,6 +84,7 @@ void update(TimeDelta timeStep, CubeID cube)
 	// activate other states please!
 	onTouch(cube);
 	onAccelChange(cube);
+	hasNeighbor(cube);
 }
 ///////////////////////////////////////////////////////
  
@@ -119,9 +121,9 @@ void onTouch(unsigned id)
 	
 	if(accel.x < 0 || accel.y < 0)
 	{
-	// kitten is annoyed
-	//vbuf2.sprites[0].setImage(Annoyed, frame % Annoyed.numFrames());
-	//frame++;
+	// kitten is annoyed!
+	vbuf.sprites[0].setImage(Annoyed, frame % Annoyed.numFrames() );
+	frame++;
 	}
 	
 	if(accel.z < 64)
@@ -133,30 +135,23 @@ void onTouch(unsigned id)
 }
 ///////////////////////////////////////////////////////
 
-	
-///////////////////////////////////////////////////////
-// A CUBE HAS LOST A NEIGHBOR
-///////////////////////////////////////////////////////
-void onNeighborRemove(unsigned firstID, unsigned firstSide, unsigned secondID, unsigned secondSide)
-{
-}
-///////////////////////////////////////////////////////
-
 
 ///////////////////////////////////////////////////////
 // A CUBE HAS A NEIGHBOR
 ///////////////////////////////////////////////////////
-void onNeighborAdd(unsigned firstID, unsigned firstSide, unsigned secondID, unsigned secondSide)
+void hasNeighbor(unsigned id)
 { 
-}
-///////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////
-// THE CUBES ARE TOUCHING!
-///////////////////////////////////////////////////////
-void drawNeighbors(CubeID cube)
-{
+	CubeID cube(id);
+    auto neighbors = vid[id].physicalNeighbors();
+	
+	for(int side=0; side<4; ++side) 
+	{
+		if (neighbors.hasNeighborAt(Side(side))) 
+		{
+			vbuf.sprites[0].setImage(Playful, frame % Playful.numFrames());
+			frame++;
+		} 
+	}
 }
 ///////////////////////////////////////////////////////
 };

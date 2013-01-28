@@ -14,4 +14,6 @@ extern const Sifteo::PinnedAssetImage Jump;
 extern const Sifteo::PinnedAssetImage Scared;
 extern Sifteo::AssetGroup KittenAssets2;
 extern const Sifteo::PinnedAssetImage Annoyed;
+extern const Sifteo::PinnedAssetImage Playful;
+extern const Sifteo::PinnedAssetImage Stretch;
 extern const Sifteo::AssetTracker Music;
